@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Health Report</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+    background:#eef2f7;
+    animation:pageFade 0.6s ease;
+}
+
+@keyframes pageFade{
+    from{opacity:0}
+    to{opacity:1}
+}
+
+/* APP BAR */
+.app-bar{
+    position:fixed;
+    top:0;
+    width:100%;
+    height:60px;
+    background:#4CAF50;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+}
+
+.main{ margin-top:70px; }
+
+/* IMAGE ANIMATION */
+.animated-img{
+    width:100%;
+    max-width:200px;
+    animation: float 4s ease-in-out infinite, glow 2s infinite alternate;
+}
+
+@keyframes float{
+    0%{transform:translateY(0)}
+    50%{transform:translateY(-12px)}
+    100%{transform:translateY(0)}
+}
+
+@keyframes glow{
+    from{filter:drop-shadow(0 0 5px rgba(0,0,0,0.2))}
+    to{filter:drop-shadow(0 0 15px rgba(0,255,150,0.5))}
+}
+
+/* CARD ANIMATION */
+.card, .diet-card{
+    opacity:0;
+    transform:translateY(30px);
+    animation:fadeSlide 0.6s ease forwards;
+}
+
+@keyframes fadeSlide{
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* STAGGER */
+.diet-card:nth-child(1){animation-delay:0.1s;}
+.diet-card:nth-child(2){animation-delay:0.2s;}
+.diet-card:nth-child(3){animation-delay:0.3s;}
+.diet-card:nth-child(4){animation-delay:0.4s;}
+.diet-card:nth-child(5){animation-delay:0.5s;}
+.diet-card:nth-child(6){animation-delay:0.6s;}
+.diet-card:nth-child(7){animation-delay:0.7s;}
+
+/* HOVER */
+.diet-card:hover{
+    transform:translateY(-8px) scale(1.02);
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+    transition:0.3s;
+}
+
+/* BUTTON */
+.btn{
+    transition:0.3s;
+}
+.btn:hover{
+    transform:scale(1.05);
+}
+
+/* FLOAT BUTTON */
+.fab{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    width:50px;
+    height:50px;
+    border-radius:50%;
+    background:#4CAF50;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    animation:bounce 2s infinite;
+}
+
+@keyframes bounce{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-8px)}
+}
+
+/* DIET COLORS */
+.monday{background:linear-gradient(135deg,#43cea2,#185a9d);color:white;}
+.tuesday{background:linear-gradient(135deg,#f7971e,#ffd200);}
+.wednesday{background:linear-gradient(135deg,#00c6ff,#0072ff);color:white;}
+.thursday{background:linear-gradient(135deg,#7b4397,#dc2430);color:white;}
+.friday{background:linear-gradient(135deg,#11998e,#38ef7d);}
+.saturday{background:linear-gradient(135deg,#fc4a1a,#f7b733);}
+.sunday{background:linear-gradient(135deg,#ff5f6d,#ffc371);}
+
+.diet-card{
+    padding:18px;
+    border-radius:16px;
+    margin-bottom:15px;
+}
+
+/* CENTER TEXT */
+.center-text{
+    position:relative;
+    top:-100px;
+    text-align:center;
+}
+
+/* BUTTON COLORS */
+.btn-download{
+    background:linear-gradient(135deg,#11998e,#38ef7d);
+    color:white;
+    border:none;
+}
+.btn-generate{
+    background:linear-gradient(135deg,#fc466b,#3f5efb);
+    color:white;
+    border:none;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app-bar">💪 AI Nutrition App</div>
+
+<div class="container main">
+
+<h4 class="text-center mb-3">
+✨ Hi, {{ name }}! Your health report is ready
+</h4>
+
+<div class="row g-3">
+
+<div class="col-md-4 text-center">
+<img src="{{ url_for('static', filename=image) }}" class="animated-img">
+</div>
+
+<div class="col-md-4">
+<div class="card p-3">
+
+<p><b>Age:</b> {{ age }}</p>
+<p><b>BMI:</b> {{ bmi }}</p>
+<p><b>Category:</b> {{ category }}</p>
+<p><b>Calories:</b> {{ calories }}</p>
+<p><b>Disease:</b> {{ disease }}</p>
+
+<h6>Macros</h6>
+<p>Protein: {{ protein }}g</p>
+<p>Carbs: {{ carbs }}g</p>
+<p>Fats: {{ fats }}g</p>
+
+<h6>Advice</h6>
+<p>{{ advice }}</p>
+
+</div>
+</div>
+
+<div class="col-md-4 text-center">
+<canvas id="chart"></canvas>
+
+<div class="center-text">
+<h4>{{ bmi }}</h4>
+<p>{{ category }}</p>
+</div>
+</div>
+
+</div>
+
+<h5 class="mt-4">📅 Weekly Diet Plan</h5>
+
+<div class="row">
+{% for d,m in weekly.items() %}
+<div class="col-md-4">
+
+<div class="diet-card
+{% if d=='Monday' %}monday
+{% elif d=='Tuesday' %}tuesday
+{% elif d=='Wednesday' %}wednesday
+{% elif d=='Thursday' %}thursday
+{% elif d=='Friday' %}friday
+{% elif d=='Saturday' %}saturday
+{% elif d=='Sunday' %}sunday
+{% endif %}
+">
+
+<h6>{{ d }}</h6>
+<p>🥣 {{ m['Breakfast'] }}</p>
+<p>🍛 {{ m['Lunch'] }}</p>
+<p>🍲 {{ m['Dinner'] }}</p>
+
+</div>
+
+</div>
+{% endfor %}
+</div>
+
+<div class="row mt-4 g-2">
+
+<div class="col-md-6">
+<form action="/download_pdf" method="post">
+
+<input type="hidden" name="name" value="{{ name }}">
+<input type="hidden" name="age" value="{{ age }}">
+<input type="hidden" name="bmi" value="{{ bmi }}">
+<input type="hidden" name="calories" value="{{ calories }}">
+<input type="hidden" name="category" value="{{ category }}">
+<input type="hidden" name="protein" value="{{ protein }}">
+<input type="hidden" name="carbs" value="{{ carbs }}">
+<input type="hidden" name="fats" value="{{ fats }}">
+<input type="hidden" name="disease" value="{{ disease }}">
+<input type="hidden" name="weekly" id="weeklyData">
+
+<button class="btn btn-download w-100">
+📄 Download Report
+</button>
+
+</form>
+</div>
+
+<div class="col-md-6">
+<a href="/" class="btn btn-generate w-100">
+🔄 Generate Another Report
+</a>
+</div>
+
+</div>
+
+</div>
+
+<div class="fab" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<script>
+const weekly = {{ weekly | tojson }};
+document.getElementById("weeklyData").value = JSON.stringify(weekly);
+
+let bmi = {{ bmi }};
+if(bmi>40) bmi=40;
+
+let angle;
+
+if (bmi < 18.5) angle = (bmi / 18.5) * (Math.PI * 0.4);
+else if (bmi < 25) angle = (Math.PI * 0.4) + ((bmi - 18.5) / 6.5) * (Math.PI * 0.2);
+else if (bmi < 30) angle = (Math.PI * 0.6) + ((bmi - 25) / 5) * (Math.PI * 0.2);
+else angle = (Math.PI * 0.8) + ((bmi - 30) / 10) * (Math.PI * 0.2);
+
+const needle = {
+id:'needle',
+afterDraw(chart){
+const {ctx}=chart;
+const meta=chart.getDatasetMeta(0);
+const x=meta.data[0].x;
+const y=meta.data[0].y;
+
+ctx.save();
+ctx.translate(x,y);
+ctx.rotate(angle - Math.PI);
+
+ctx.beginPath();
+ctx.moveTo(0,-5);
+ctx.lineTo(100,0);
+ctx.lineTo(0,5);
+ctx.fill();
+
+ctx.beginPath();
+ctx.arc(0,0,5,0,Math.PI*2);
+ctx.fill();
+
+ctx.restore();
+}
+};
+
+new Chart(document.getElementById("chart"),{
+type:'doughnut',
+data:{
+labels:['Underweight','Normal','Overweight','Obese'],
+datasets:[{
+data:[18.5,6.5,5,10],
+backgroundColor:['blue','green','yellow','red']
+}]
+},
+options:{
+rotation:-90,
+circumference:180,
+cutout:'70%',
+animation:{
+duration:1500,
+easing:'easeOutBounce'
+}
+},
+plugins:[needle]
+});
+</script>
+
+</body>
+</html>
