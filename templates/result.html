@@ -10,12 +10,13 @@
 
 <style>
 
+/* PAGE */
 body{
     background:#eef2f7;
-    animation:pageFade 0.6s ease;
+    animation:fadeIn 0.6s ease;
 }
 
-@keyframes pageFade{
+@keyframes fadeIn{
     from{opacity:0}
     to{opacity:1}
 }
@@ -40,56 +41,53 @@ body{
 .animated-img{
     width:100%;
     max-width:200px;
-    animation: float 4s ease-in-out infinite, glow 2s infinite alternate;
+    animation: float 3s ease-in-out infinite, glow 1.5s infinite alternate;
 }
 
 @keyframes float{
     0%{transform:translateY(0)}
-    50%{transform:translateY(-12px)}
+    50%{transform:translateY(-20px)}
     100%{transform:translateY(0)}
 }
 
 @keyframes glow{
-    from{filter:drop-shadow(0 0 5px rgba(0,0,0,0.2))}
-    to{filter:drop-shadow(0 0 15px rgba(0,255,150,0.5))}
+    from{filter:drop-shadow(0 0 5px rgba(0,0,0,0.3))}
+    to{filter:drop-shadow(0 0 25px rgba(0,255,150,0.9))}
 }
 
 /* CARD ANIMATION */
 .card, .diet-card{
     opacity:0;
-    transform:translateY(30px);
-    animation:fadeSlide 0.6s ease forwards;
+    transform:translateY(60px) scale(0.9);
+    animation:fadeZoom 0.7s ease forwards;
 }
 
-@keyframes fadeSlide{
+@keyframes fadeZoom{
     to{
         opacity:1;
-        transform:translateY(0);
+        transform:translateY(0) scale(1);
     }
 }
 
 /* STAGGER */
-.diet-card:nth-child(1){animation-delay:0.1s;}
-.diet-card:nth-child(2){animation-delay:0.2s;}
-.diet-card:nth-child(3){animation-delay:0.3s;}
-.diet-card:nth-child(4){animation-delay:0.4s;}
-.diet-card:nth-child(5){animation-delay:0.5s;}
-.diet-card:nth-child(6){animation-delay:0.6s;}
-.diet-card:nth-child(7){animation-delay:0.7s;}
+.diet-card:nth-child(1){animation-delay:0.2s;}
+.diet-card:nth-child(2){animation-delay:0.4s;}
+.diet-card:nth-child(3){animation-delay:0.6s;}
+.diet-card:nth-child(4){animation-delay:0.8s;}
+.diet-card:nth-child(5){animation-delay:1s;}
+.diet-card:nth-child(6){animation-delay:1.2s;}
+.diet-card:nth-child(7){animation-delay:1.4s;}
 
 /* HOVER */
 .diet-card:hover{
-    transform:translateY(-8px) scale(1.02);
-    box-shadow:0 10px 25px rgba(0,0,0,0.2);
-    transition:0.3s;
+    transform:translateY(-15px) scale(1.08);
+    box-shadow:0 20px 40px rgba(0,0,0,0.3);
+    transition:0.4s;
 }
 
 /* BUTTON */
-.btn{
-    transition:0.3s;
-}
 .btn:hover{
-    transform:scale(1.05);
+    transform:scale(1.1);
 }
 
 /* FLOAT BUTTON */
@@ -106,12 +104,12 @@ body{
     align-items:center;
     justify-content:center;
     cursor:pointer;
-    animation:bounce 2s infinite;
+    animation:bounce 1.5s infinite;
 }
 
 @keyframes bounce{
     0%,100%{transform:translateY(0)}
-    50%{transform:translateY(-8px)}
+    50%{transform:translateY(-15px)}
 }
 
 /* DIET COLORS */
@@ -163,10 +161,12 @@ body{
 
 <div class="row g-3">
 
+<!-- IMAGE -->
 <div class="col-md-4 text-center">
 <img src="{{ url_for('static', filename=image) }}" class="animated-img">
 </div>
 
+<!-- DETAILS -->
 <div class="col-md-4">
 <div class="card p-3">
 
@@ -187,6 +187,7 @@ body{
 </div>
 </div>
 
+<!-- CHART -->
 <div class="col-md-4 text-center">
 <canvas id="chart"></canvas>
 
@@ -198,6 +199,7 @@ body{
 
 </div>
 
+<!-- DIET -->
 <h5 class="mt-4">📅 Weekly Diet Plan</h5>
 
 <div class="row">
@@ -226,6 +228,7 @@ body{
 {% endfor %}
 </div>
 
+<!-- BUTTONS -->
 <div class="row mt-4 g-2">
 
 <div class="col-md-6">
@@ -242,17 +245,13 @@ body{
 <input type="hidden" name="disease" value="{{ disease }}">
 <input type="hidden" name="weekly" id="weeklyData">
 
-<button class="btn btn-download w-100">
-📄 Download Report
-</button>
+<button class="btn btn-download w-100">📄 Download Report</button>
 
 </form>
 </div>
 
 <div class="col-md-6">
-<a href="/" class="btn btn-generate w-100">
-🔄 Generate Another Report
-</a>
+<a href="/" class="btn btn-generate w-100">🔄 Generate Another Report</a>
 </div>
 
 </div>
@@ -315,8 +314,8 @@ rotation:-90,
 circumference:180,
 cutout:'70%',
 animation:{
-duration:1500,
-easing:'easeOutBounce'
+duration:2000,
+easing:'easeOutElastic'
 }
 },
 plugins:[needle]
