@@ -9,7 +9,12 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-body{background:#eef2f7;}
+
+body{
+    background:#eef2f7;
+    animation:fadeIn 0.6s ease;
+}
+@keyframes fadeIn{from{opacity:0} to{opacity:1}}
 
 .app-bar{
 position:fixed;top:0;width:100%;height:60px;
@@ -39,16 +44,27 @@ padding:18px;border-radius:16px;margin-bottom:15px;
 .diet-card.show{
 opacity:1;
 transform:translateY(0) scale(1);
+animation:popUp 0.6s ease;
+}
+@keyframes popUp{
+0%{transform:translateY(80px) scale(0.7);opacity:0;}
+60%{transform:translateY(-10px) scale(1.05);}
+100%{transform:translateY(0) scale(1);opacity:1;}
+}
+
+.diet-card:hover{
+transform:translateY(-10px) scale(1.05);
+box-shadow:0 15px 35px rgba(0,0,0,0.3);
 }
 
 /* COLORS */
-.monday{background:#43cea2;color:white;}
-.tuesday{background:#ffd200;}
-.wednesday{background:#00c6ff;color:white;}
-.thursday{background:#dc2430;color:white;}
-.friday{background:#38ef7d;}
-.saturday{background:#f7b733;}
-.sunday{background:#ffc371;}
+.monday{background:linear-gradient(135deg,#43cea2,#185a9d);color:white;}
+.tuesday{background:linear-gradient(135deg,#f7971e,#ffd200);}
+.wednesday{background:linear-gradient(135deg,#00c6ff,#0072ff);color:white;}
+.thursday{background:linear-gradient(135deg,#7b4397,#dc2430);color:white;}
+.friday{background:linear-gradient(135deg,#11998e,#38ef7d);}
+.saturday{background:linear-gradient(135deg,#fc4a1a,#f7b733);}
+.sunday{background:linear-gradient(135deg,#ff5f6d,#ffc371);}
 
 .center-text{
 position:relative;
@@ -57,8 +73,29 @@ text-align:center;
 }
 
 /* BUTTON */
-.btn-download{background:#38ef7d;color:white;}
-.btn-generate{background:#fc466b;color:white;}
+.btn-download{
+background:linear-gradient(135deg,#11998e,#38ef7d);
+color:white;
+}
+.btn-generate{
+background:linear-gradient(135deg,#fc466b,#3f5efb);
+color:white;
+}
+
+.fab{
+position:fixed;
+bottom:20px;
+right:20px;
+width:50px;height:50px;border-radius:50%;
+background:#4CAF50;color:white;
+display:flex;align-items:center;justify-content:center;
+cursor:pointer;
+animation:bounce 1.5s infinite;
+}
+@keyframes bounce{
+0%,100%{transform:translateY(0)}
+50%{transform:translateY(-10px)}
+}
 
 </style>
 </head>
@@ -69,32 +106,47 @@ text-align:center;
 
 <div class="container main">
 
-<h4 class="text-center">Hi {{name}}, your report is ready</h4>
+<h4 class="text-center mb-3">
+✨ Hi, {{ name }}! Your health report is ready
+</h4>
 
-<div class="row">
+<div class="row g-3">
 
 <div class="col-md-4 text-center">
 <img src="{{ url_for('static', filename=image) }}" class="animated-img">
 </div>
 
 <div class="col-md-4">
-<p>Age: {{age}}</p>
-<p>BMI: {{bmi}}</p>
-<p>Category: {{category}}</p>
-<p>Calories: {{calories}}</p>
+<div class="card p-3">
+
+<p><b>Age:</b> {{ age }}</p>
+<p><b>BMI:</b> {{ bmi }}</p>
+<p><b>Category:</b> {{ category }}</p>
+<p><b>Calories:</b> {{ calories }}</p>
+<p><b>Disease:</b> {{ disease }}</p>
+
+<h6>Macros</h6>
+<p>Protein: {{ protein }}g</p>
+<p>Carbs: {{ carbs }}g</p>
+<p>Fats: {{ fats }}g</p>
+
+<h6>Advice</h6>
+<p>{{ advice }}</p>
+
+</div>
 </div>
 
 <div class="col-md-4 text-center">
 <canvas id="chart"></canvas>
 <div class="center-text">
-<h4>{{bmi}}</h4>
-<p>{{category}}</p>
+<h4>{{ bmi }}</h4>
+<p>{{ category }}</p>
 </div>
 </div>
 
 </div>
 
-<h5>Weekly Diet</h5>
+<h5 class="mt-4">📅 Weekly Diet Plan</h5>
 
 <div class="row">
 {% for d,m in weekly.items() %}
@@ -111,10 +163,10 @@ text-align:center;
 {% endif %}
 ">
 
-<h6>{{d}}</h6>
-<p>{{m['Breakfast']}}</p>
-<p>{{m['Lunch']}}</p>
-<p>{{m['Dinner']}}</p>
+<h6>{{ d }}</h6>
+<p>🥣 {{ m['Breakfast'] }}</p>
+<p>🍛 {{ m['Lunch'] }}</p>
+<p>🍲 {{ m['Dinner'] }}</p>
 
 </div>
 
@@ -122,19 +174,39 @@ text-align:center;
 {% endfor %}
 </div>
 
-<!-- BUTTON -->
+<div class="row mt-4 g-2">
+
+<div class="col-md-6">
 <form action="/download_pdf" method="post">
+
 <input type="hidden" name="name" value="{{ name }}">
 <input type="hidden" name="age" value="{{ age }}">
 <input type="hidden" name="bmi" value="{{ bmi }}">
+<input type="hidden" name="calories" value="{{ calories }}">
+<input type="hidden" name="category" value="{{ category }}">
+<input type="hidden" name="protein" value="{{ protein }}">
+<input type="hidden" name="carbs" value="{{ carbs }}">
+<input type="hidden" name="fats" value="{{ fats }}">
+<input type="hidden" name="disease" value="{{ disease }}">
 <input type="hidden" name="weekly" id="weeklyData">
 
-<button class="btn btn-download w-100 mt-3">Download PDF</button>
+<button class="btn btn-download w-100">📄 Download Report</button>
+
 </form>
+</div>
+
+<div class="col-md-6">
+<a href="/" class="btn btn-generate w-100">🔄 Generate Another Report</a>
+</div>
 
 </div>
 
+</div>
+
+<div class="fab" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
 <script>
+
 const weekly={{weekly|tojson}};
 document.getElementById("weeklyData").value=JSON.stringify(weekly);
 
@@ -146,7 +218,7 @@ if(entry.isIntersecting){
 setTimeout(()=>entry.target.classList.add("show"),i*150);
 }
 });
-});
+},{threshold:0.2});
 cards.forEach(c=>observer.observe(c));
 
 /* BMI NEEDLE */
@@ -203,6 +275,7 @@ animation:{duration:1500}
 },
 plugins:[needle]
 });
+
 </script>
 
 </body>
