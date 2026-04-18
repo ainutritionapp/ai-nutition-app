@@ -1,0 +1,11 @@
+food,calories,protein,carbs,fats,category
+Oats,150,5,27,3,Breakfast
+Banana,100,1,23,0,Breakfast
+Milk,120,6,12,5,Breakfast
+Chapati,110,3,18,2,Lunch
+Rice,200,4,45,1,Lunch
+Dal,180,9,25,3,Lunch
+Paneer,250,14,6,20,Dinner
+Salad,80,2,10,1,Dinner
+Soup,90,3,15,2,Dinner
+Curd,100,4,8,4,Dinner
