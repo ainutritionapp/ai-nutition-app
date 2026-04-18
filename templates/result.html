@@ -10,7 +10,6 @@
 
 <style>
 
-/* PAGE */
 body{
     background:#eef2f7;
     animation:fadeIn 0.6s ease;
@@ -37,60 +36,92 @@ body{
 
 .main{ margin-top:70px; }
 
-/* IMAGE ANIMATION */
+/* IMAGE */
 .animated-img{
     width:100%;
     max-width:200px;
-    animation: float 3s ease-in-out infinite, glow 1.5s infinite alternate;
+    animation: float 3s ease-in-out infinite;
 }
 
 @keyframes float{
     0%{transform:translateY(0)}
-    50%{transform:translateY(-20px)}
+    50%{transform:translateY(-15px)}
     100%{transform:translateY(0)}
 }
 
-@keyframes glow{
-    from{filter:drop-shadow(0 0 5px rgba(0,0,0,0.3))}
-    to{filter:drop-shadow(0 0 25px rgba(0,255,150,0.9))}
+/* CARD */
+.card{
+    border-radius:15px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* CARD ANIMATION */
-.card, .diet-card{
+/* CHART TEXT */
+.center-text{
+    position:relative;
+    top:-100px;
+    text-align:center;
+}
+
+/* 🔥 POP-UP ANIMATION */
+.diet-card{
     opacity:0;
-    transform:translateY(60px) scale(0.9);
-    animation:fadeZoom 0.7s ease forwards;
+    transform:translateY(80px) scale(0.8);
+    transition:all 0.6s ease;
+    padding:18px;
+    border-radius:16px;
+    margin-bottom:15px;
 }
 
-@keyframes fadeZoom{
-    to{
-        opacity:1;
+.diet-card.show{
+    opacity:1;
+    transform:translateY(0) scale(1);
+    animation:popUp 0.6s ease;
+}
+
+@keyframes popUp{
+    0%{
+        transform:translateY(80px) scale(0.7);
+        opacity:0;
+    }
+    60%{
+        transform:translateY(-10px) scale(1.05);
+    }
+    100%{
         transform:translateY(0) scale(1);
+        opacity:1;
     }
 }
 
-/* STAGGER */
-.diet-card:nth-child(1){animation-delay:0.2s;}
-.diet-card:nth-child(2){animation-delay:0.4s;}
-.diet-card:nth-child(3){animation-delay:0.6s;}
-.diet-card:nth-child(4){animation-delay:0.8s;}
-.diet-card:nth-child(5){animation-delay:1s;}
-.diet-card:nth-child(6){animation-delay:1.2s;}
-.diet-card:nth-child(7){animation-delay:1.4s;}
-
 /* HOVER */
 .diet-card:hover{
-    transform:translateY(-15px) scale(1.08);
-    box-shadow:0 20px 40px rgba(0,0,0,0.3);
-    transition:0.4s;
+    transform:translateY(-10px) scale(1.05);
+    box-shadow:0 15px 35px rgba(0,0,0,0.3);
 }
 
-/* BUTTON */
+/* COLORS */
+.monday{background:linear-gradient(135deg,#43cea2,#185a9d);color:white;}
+.tuesday{background:linear-gradient(135deg,#f7971e,#ffd200);}
+.wednesday{background:linear-gradient(135deg,#00c6ff,#0072ff);color:white;}
+.thursday{background:linear-gradient(135deg,#7b4397,#dc2430);color:white;}
+.friday{background:linear-gradient(135deg,#11998e,#38ef7d);}
+.saturday{background:linear-gradient(135deg,#fc4a1a,#f7b733);}
+.sunday{background:linear-gradient(135deg,#ff5f6d,#ffc371);}
+
+/* BUTTONS */
 .btn:hover{
-    transform:scale(1.1);
+    transform:scale(1.08);
 }
 
-/* FLOAT BUTTON */
+.btn-download{
+    background:linear-gradient(135deg,#11998e,#38ef7d);
+    color:white;
+}
+.btn-generate{
+    background:linear-gradient(135deg,#fc466b,#3f5efb);
+    color:white;
+}
+
+/* FLOAT BTN */
 .fab{
     position:fixed;
     bottom:20px;
@@ -109,41 +140,7 @@ body{
 
 @keyframes bounce{
     0%,100%{transform:translateY(0)}
-    50%{transform:translateY(-15px)}
-}
-
-/* DIET COLORS */
-.monday{background:linear-gradient(135deg,#43cea2,#185a9d);color:white;}
-.tuesday{background:linear-gradient(135deg,#f7971e,#ffd200);}
-.wednesday{background:linear-gradient(135deg,#00c6ff,#0072ff);color:white;}
-.thursday{background:linear-gradient(135deg,#7b4397,#dc2430);color:white;}
-.friday{background:linear-gradient(135deg,#11998e,#38ef7d);}
-.saturday{background:linear-gradient(135deg,#fc4a1a,#f7b733);}
-.sunday{background:linear-gradient(135deg,#ff5f6d,#ffc371);}
-
-.diet-card{
-    padding:18px;
-    border-radius:16px;
-    margin-bottom:15px;
-}
-
-/* CENTER TEXT */
-.center-text{
-    position:relative;
-    top:-100px;
-    text-align:center;
-}
-
-/* BUTTON COLORS */
-.btn-download{
-    background:linear-gradient(135deg,#11998e,#38ef7d);
-    color:white;
-    border:none;
-}
-.btn-generate{
-    background:linear-gradient(135deg,#fc466b,#3f5efb);
-    color:white;
-    border:none;
+    50%{transform:translateY(-10px)}
 }
 
 </style>
@@ -161,12 +158,10 @@ body{
 
 <div class="row g-3">
 
-<!-- IMAGE -->
 <div class="col-md-4 text-center">
 <img src="{{ url_for('static', filename=image) }}" class="animated-img">
 </div>
 
-<!-- DETAILS -->
 <div class="col-md-4">
 <div class="card p-3">
 
@@ -187,7 +182,6 @@ body{
 </div>
 </div>
 
-<!-- CHART -->
 <div class="col-md-4 text-center">
 <canvas id="chart"></canvas>
 
@@ -199,14 +193,13 @@ body{
 
 </div>
 
-<!-- DIET -->
 <h5 class="mt-4">📅 Weekly Diet Plan</h5>
 
 <div class="row">
 {% for d,m in weekly.items() %}
 <div class="col-md-4">
 
-<div class="diet-card
+<div class="diet-card animate-item
 {% if d=='Monday' %}monday
 {% elif d=='Tuesday' %}tuesday
 {% elif d=='Wednesday' %}wednesday
@@ -228,7 +221,6 @@ body{
 {% endfor %}
 </div>
 
-<!-- BUTTONS -->
 <div class="row mt-4 g-2">
 
 <div class="col-md-6">
@@ -264,42 +256,22 @@ body{
 const weekly = {{ weekly | tojson }};
 document.getElementById("weeklyData").value = JSON.stringify(weekly);
 
-let bmi = {{ bmi }};
-if(bmi>40) bmi=40;
+/* 🔥 POP ANIMATION JS */
+const cards = document.querySelectorAll(".animate-item");
 
-let angle;
+const observer = new IntersectionObserver((entries)=>{
+    entries.forEach((entry, index)=>{
+        if(entry.isIntersecting){
+            setTimeout(()=>{
+                entry.target.classList.add("show");
+            }, index * 150);
+        }
+    });
+},{threshold:0.2});
 
-if (bmi < 18.5) angle = (bmi / 18.5) * (Math.PI * 0.4);
-else if (bmi < 25) angle = (Math.PI * 0.4) + ((bmi - 18.5) / 6.5) * (Math.PI * 0.2);
-else if (bmi < 30) angle = (Math.PI * 0.6) + ((bmi - 25) / 5) * (Math.PI * 0.2);
-else angle = (Math.PI * 0.8) + ((bmi - 30) / 10) * (Math.PI * 0.2);
+cards.forEach(card=>observer.observe(card));
 
-const needle = {
-id:'needle',
-afterDraw(chart){
-const {ctx}=chart;
-const meta=chart.getDatasetMeta(0);
-const x=meta.data[0].x;
-const y=meta.data[0].y;
-
-ctx.save();
-ctx.translate(x,y);
-ctx.rotate(angle - Math.PI);
-
-ctx.beginPath();
-ctx.moveTo(0,-5);
-ctx.lineTo(100,0);
-ctx.lineTo(0,5);
-ctx.fill();
-
-ctx.beginPath();
-ctx.arc(0,0,5,0,Math.PI*2);
-ctx.fill();
-
-ctx.restore();
-}
-};
-
+/* CHART */
 new Chart(document.getElementById("chart"),{
 type:'doughnut',
 data:{
@@ -317,8 +289,7 @@ animation:{
 duration:2000,
 easing:'easeOutElastic'
 }
-},
-plugins:[needle]
+}
 });
 </script>
 
